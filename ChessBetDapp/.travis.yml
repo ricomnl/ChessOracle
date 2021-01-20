@@ -1,0 +1,31 @@
+language: node_js
+
+node_js:
+  - "8"
+
+cache:
+  directories:
+  - node_modules
+
+before_script:
+  - touch .env
+  - ./startGanache.sh
+
+script:
+  - npm run solium:lint
+  - truffle test --development
+  - npm run build
+  - truffle migrate --network kovan --reset
+
+after_script:
+  - ./stopGanache.sh
+
+deploy:
+  provider: heroku
+  email: "rmeinl97@gmail.com"
+  api_key:
+    secure: $HEROKU_API_KEY
+  app: "chessbet"
+  skip_cleanup: true
+  on:
+    branch: master
